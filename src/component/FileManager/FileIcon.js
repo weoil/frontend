@@ -173,7 +173,12 @@ class FileIconCompoment extends Component {
             this.props.location.pathname
         );
         const isMobile = statusHelper.isMobile();
-
+        const suffixSplits = this.props.file.name.split('.');
+        const suffix = suffixSplits[suffixSplits.length - 1];
+        const isImage = this.props.file.type === "file" && ['png', 'jpg', 'gif', 'jpeg', 'webp'].includes(suffix);
+        const hasPic = this.props.file.pic !== "" && this.props.file.pic !== " " &&
+            this.props.file.pic !== "null,null";
+        const useSourceImageView = (isImage && this.props.file.size < 2000000);
         return (
             <div className={classes.container}>
                 <ButtonBase
@@ -186,10 +191,8 @@ class FileIconCompoment extends Component {
                         classes.button
                     )}
                 >
-                    {this.props.file.pic !== "" &&
-                        !this.state.showPicIcon &&
-                        this.props.file.pic !== " " &&
-                        this.props.file.pic !== "null,null" && (
+                    {!this.state.showPicIcon && (
+                        hasPic || useSourceImageView) && (
                             <div className={classes.preview}>
                                 <LazyLoadImage
                                     className={classNames(
@@ -204,15 +207,16 @@ class FileIconCompoment extends Component {
                                         baseURL +
                                         (isSharePage && this.props.shareInfo
                                             ? "/share/thumb/" +
-                                              this.props.shareInfo.key +
-                                              "/" +
-                                              this.props.file.id +
-                                              "?path=" +
-                                              encodeURIComponent(
-                                                  this.props.file.path
-                                              )
-                                            : "/file/thumb/" +
-                                              this.props.file.id)
+                                            this.props.shareInfo.key +
+                                            "/" +
+                                            this.props.file.id +
+                                            "?path=" +
+                                            encodeURIComponent(
+                                                this.props.file.path
+                                            )
+                                            : hasPic ? "/file/thumb/" +
+                                                this.props.file.id : "/file/preview/" +
+                                            this.props.file.id)
                                     }
                                     afterLoad={() =>
                                         this.setState({ loading: false })
@@ -246,14 +250,14 @@ class FileIconCompoment extends Component {
                     {(this.props.file.pic === "" ||
                         this.state.showPicIcon ||
                         this.props.file.pic === " " ||
-                        this.props.file.pic === "null,null") && (
-                        <div className={classes.previewIcon}>
-                            <TypeIcon
-                                className={classes.iconBig}
-                                fileName={this.props.file.name}
-                            />
-                        </div>
-                    )}
+                        this.props.file.pic === "null,null") && !useSourceImageView && (
+                            <div className={classes.previewIcon}>
+                                <TypeIcon
+                                    className={classes.iconBig}
+                                    fileName={this.props.file.name}
+                                />
+                            </div>
+                        )}
                     {(this.props.file.pic === "" ||
                         this.state.showPicIcon ||
                         this.props.file.pic === " " ||

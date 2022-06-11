@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         "/api",
         proxy({
-            target: "http://localhost:5212",
+            target: "http://192.168.31.251:5212",
             changeOrigin: true,
         })
     );
@@ -12,7 +12,7 @@ module.exports = function (app) {
     app.use(
         "/custom",
         proxy({
-            target: "http://localhost:5212",
+            target: "http://192.168.31.251:5212",
             changeOrigin: true,
         })
     );
